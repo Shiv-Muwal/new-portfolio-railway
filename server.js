@@ -4,10 +4,15 @@ import fileUpload from "express-fileupload";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 dotenv.config();
 const app = express();
-const __dirname = path.resolve();
+
+// ✅ Fix for `__dirname` in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // ✅ Middleware
 app.use(express.json()); // Parse JSON body
@@ -23,7 +28,7 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin) || origin?.startsWith("http://localhost")) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -34,14 +39,14 @@ app.use(
   })
 );
 
-// ✅ Cloudinary Config
-cloudinary.v2.config({
+// ✅ Cloudinary Config (Fix)
+cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
+// ✅ Serve Portfolio Frontend
 app.use(express.static(path.join(__dirname, "../portfolio/dist")));
 
 app.get("/", (req, res) => {
@@ -58,5 +63,5 @@ app.get("/admin/*", (req, res) => {
 // ✅ Start Server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });

@@ -39,9 +39,18 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ✅ Add a simple test route
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, "../portfolio/dist")));
+
 app.get("/", (req, res) => {
-  res.send("Server is running successfully!");
+  res.sendFile(path.join(__dirname, "../portfolio/dist", "index.html"));
+});
+
+// ✅ Serve Dashboard Frontend
+app.use("/admin", express.static(path.join(__dirname, "../dashboard/dist")));
+
+app.get("/admin/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../dashboard/dist", "index.html"));
 });
 
 // ✅ Start Server

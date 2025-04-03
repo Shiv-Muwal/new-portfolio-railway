@@ -4,12 +4,10 @@ import fileUpload from "express-fileupload";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 import path from "path";
-import { fileURLToPath } from "url";
 
 dotenv.config();
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.resolve();
 
 // ✅ Middleware
 app.use(express.json()); // Parse JSON body

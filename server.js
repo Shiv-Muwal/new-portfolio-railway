@@ -21,9 +21,8 @@ app.use(fileUpload({ useTempFiles: true }));
 
 // ✅ Allow CORS
 const allowedOrigins = [
-  process.env.PORTFOLIO_URL,
-  process.env.DASHBOARD_URL,
-  "http://localhost:5173", // Allow local Vite dev server
+  process.env.PORTFOLIO_URL, 
+  process.env.DASHBOARD_URL
 ];
 
 app.use(
@@ -40,7 +39,7 @@ app.use(
   })
 );
 
-// ✅ Cloudinary Config
+// ✅ Cloudinary Config (Fix)
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -48,26 +47,18 @@ cloudinary.config({
 });
 
 // ✅ Serve Portfolio Frontend
-const portfolioPath = path.join(__dirname, "../portfolio/dist");
-if (fs.existsSync(portfolioPath)) {
-  app.use(express.static(portfolioPath));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(portfolioPath, "index.html"));
-  });
-} else {
-  console.error("❌ Portfolio build files not found!");
-}
+app.use(express.static(path.join(__dirname, "../portfolio/dist")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../portfolio/dist", "index.html"));
+});
 
 // ✅ Serve Dashboard Frontend
-const dashboardPath = path.join(__dirname, "../dashboard/dist");
-if (fs.existsSync(dashboardPath)) {
-  app.use("/admin", express.static(dashboardPath));
-  app.get("/admin/*", (req, res) => {
-    res.sendFile(path.join(dashboardPath, "index.html"));
-  });
-} else {
-  console.error("❌ Dashboard build files not found!");
-}
+app.use("/admin", express.static(path.join(__dirname, "../dashboard/dist")));
+
+app.get("/admin/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../dashboard/dist", "index.html"));
+});
 
 // ✅ Start Server
 const PORT = process.env.PORT || 4000;

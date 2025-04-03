@@ -3,9 +3,13 @@ import cors from "cors";
 import fileUpload from "express-fileupload";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ✅ Middleware
 app.use(express.json()); // Parse JSON body
@@ -39,7 +43,7 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const __dirname = path.resolve();
+
 app.use(express.static(path.join(__dirname, "../portfolio/dist")));
 
 app.get("/", (req, res) => {
@@ -54,7 +58,7 @@ app.get("/admin/*", (req, res) => {
 });
 
 // ✅ Start Server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
